@@ -32,6 +32,10 @@ public:
         return GetSum(node_begin());
     }
 
+    KeyT SumOfFirstK(size_t k) {
+        return SumOfFirstK(k, node_begin(), node_end());
+    }
+
 protected:
     void operator()(NodeIt node_it, NodeConstIt end_nd_it) {
         NodeConstIt l_it = node_it.get_l_child();
@@ -40,7 +44,7 @@ protected:
 
         NodeConstIt r_it = node_it.get_r_child();
         const size_t r_sz = (r_it == end_nd_it) ? 0 : GetMeta(r_it).sz;
-        const KeyT r_sum = (r_it == end_nd_it) ? 0 : GetMeta(r_it).sz;
+        const KeyT r_sum = (r_it == end_nd_it) ? 0 : GetMeta(r_it).sum;
 
 
         GetMutMeta(node_it).sz = 1 + l_sz + r_sz;
@@ -61,6 +65,22 @@ private:
 
     static KeyT GetSum(NodeConstIt cit, NodeConstIt end) {
         return cit == end ? KeyT{} : cit.get_metadata().sum;
+    }
+
+    static size_t GetSz(NodeConstIt cit, NodeConstIt end) {
+        return cit == end ? KeyT{} : cit.get_metadata().sz;
+    }
+
+    static KeyT SumOfFirstK(size_t k, NodeConstIt root, NodeConstIt end) {
+        if (root == end) {
+            return {};
+        } else if (GetSz(root, end) <= k) {
+            return GetSum(root, end);
+        } else if (GetSz(root.get_l_child(), end) + 1 <= k) {
+            return **root + GetSum(root.get_l_child(), end) + SumOfFirstK(k - (GetSz(root.get_l_child(), end) + 1), root.get_r_child(), end);
+        } else {
+            return SumOfFirstK(k, root.get_l_child(), end);
+        }
     }
 };
 
@@ -97,6 +117,7 @@ signed main() {
         cout << i << " ";
     }
     cout << endl;
+    cout << x.SumOfFirstK(3) << endl;
 
     return 0;
 }
