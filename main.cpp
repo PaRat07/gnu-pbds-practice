@@ -85,25 +85,25 @@ private:
 };
 
 template<typename KeyT>
-using CT = __gnu_pbds::tree<KeyT, __gnu_pbds::null_type, std::less<>, __gnu_pbds::rb_tree_tag, Policy>;
+using ExtOrdSet = __gnu_pbds::tree<KeyT, __gnu_pbds::null_type, std::less<>, __gnu_pbds::rb_tree_tag, Policy>;
 
 
 // -> (less-or-equal, greater)
 template<typename KeyT>
-std::pair<CT<KeyT>, CT<KeyT>> SplitLeq(CT<KeyT> tr, KeyT key) {
-    CT<KeyT> gr;
+std::pair<ExtOrdSet<KeyT>, ExtOrdSet<KeyT>> SplitLeq(ExtOrdSet<KeyT> tr, KeyT key) {
+    ExtOrdSet<KeyT> gr;
     tr.split(key, gr);
     return { std::move(tr), std::move(gr) };
 }
 
 template<typename KeyT>
-CT<KeyT> Merge(CT<KeyT> le, CT<KeyT> gr) {
+ExtOrdSet<KeyT> Merge(ExtOrdSet<KeyT> le, ExtOrdSet<KeyT> gr) {
     le.join(gr);
     return le;
 }
 
 signed main() {
-    CT<int> x;
+    ExtOrdSet<int> x;
     for (int i = 0; i < 10; ++i) {
         x.insert(i);
     }
